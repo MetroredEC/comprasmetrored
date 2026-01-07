@@ -1,0 +1,158 @@
+{
+  "moneda": "USD",
+  "schemas": {
+    "usuarios": {"id": "string", "nombre": "string", "rol": "Solicitante|Jefatura|Compras|Contabilidad|Admin", "area": "string"},
+    "presupuestos": {"area": "string", "montoAnual": "number", "montoDisponible": "number"},
+    "matrizAprobaciones": {"min": "number", "max": "number", "roles": "array"},
+    "solicitudes": {"id": "string", "fecha": "ISODate", "solicitanteId": "string", "area": "string", "descripcion": "string", "urgencia": "boolean", "justificacionUrgencia": "string", "items": "array", "montoEstimado": "number", "estado": "string", "cotizaciones": "array", "proveedorSeleccionadoId": "string", "ordenCompraId": "string", "facturaId": "string", "pagoId": "string"},
+    "cotizaciones": {"id": "string", "solicitudId": "string", "proveedorId": "string", "fecha": "ISODate", "monto": "number", "detalle": "string", "estado": "string"},
+    "ordenesCompra": {"id": "string", "solicitudId": "string", "cotizacionId": "string", "proveedorId": "string", "fecha": "ISODate", "monto": "number", "estado": "string", "items": "array", "fechaEntrega": "ISODate", "notas": "string"},
+    "facturas": {"id": "string", "poId": "string", "proveedorId": "string", "fecha": "ISODate", "monto": "number", "estado": "string", "referencia": "string"},
+    "pagos": {"id": "string", "facturaId": "string", "fechaPago": "ISODate", "monto": "number", "metodo": "string"},
+    "proveedores": {"id": "string", "nombre": "string", "estado": "aprobado|condicional|bloqueado", "rating": "number"},
+    "audit": {"id": "string", "timestamp": "ISODate", "usuarioId": "string", "accion": "string", "entidad": "string", "entidadId": "string", "detalle": "string", "before": "string", "after": "string"}
+  },
+  "usuarios": [
+    {"id": "u1", "nombre": "Ana Pérez", "rol": "Solicitante", "area": "Clínica"},
+    {"id": "u2", "nombre": "Carlos Gómez", "rol": "Jefatura", "area": "Clínica"},
+    {"id": "u3", "nombre": "María Hernández", "rol": "Compras", "area": ""},
+    {"id": "u4", "nombre": "Luis Martínez", "rol": "Contabilidad", "area": ""},
+    {"id": "u5", "nombre": "Administrador", "rol": "Admin", "area": ""},
+    {"id": "u6", "nombre": "Pedro Sánchez", "rol": "Solicitante", "area": "Laboratorio"},
+    {"id": "u7", "nombre": "Laura Torres", "rol": "Jefatura", "area": "Laboratorio"}
+  ],
+  "presupuestos": [
+    {"area": "Clínica", "montoAnual": 20000, "montoDisponible": 15000},
+    {"area": "Laboratorio", "montoAnual": 15000, "montoDisponible": 12000},
+    {"area": "Administración", "montoAnual": 10000, "montoDisponible": 9000}
+  ],
+  "matrizAprobaciones": [
+    {"min": 0, "max": 1000, "roles": ["Jefatura"]},
+    {"min": 1000.01, "max": 5000, "roles": ["Jefatura", "Contabilidad"]},
+    {"min": 5000.01, "max": 1000000000, "roles": ["Jefatura", "Contabilidad", "Admin"]}
+  ],
+  "proveedores": [
+    {"id": "SUP-001", "nombre": "Proveedor A SA", "estado": "aprobado", "rating": 4.5},
+    {"id": "SUP-002", "nombre": "Proveedor B Ltda", "estado": "condicional", "rating": 3.8},
+    {"id": "SUP-003", "nombre": "Proveedor C", "estado": "bloqueado", "rating": 2.5}
+  ],
+  "solicitudes": [
+    {
+      "id": "PR-001",
+      "fecha": "2025-12-28T10:00:00Z",
+      "solicitanteId": "u1",
+      "area": "Clínica",
+      "descripcion": "Compra de insumos médicos básicos",
+      "urgencia": false,
+      "justificacionUrgencia": "",
+      "items": [
+        {"descripcion": "Guantes de látex", "cantidad": 100, "precioUnitario": 0.5},
+        {"descripcion": "Jeringas", "cantidad": 200, "precioUnitario": 0.2}
+      ],
+      "montoEstimado": 90.0,
+      "estado": "enviado",
+      "cotizaciones": [],
+      "proveedorSeleccionadoId": null,
+      "ordenCompraId": null,
+      "facturaId": null,
+      "pagoId": null
+    },
+    {
+      "id": "PR-002",
+      "fecha": "2025-12-20T09:00:00Z",
+      "solicitanteId": "u6",
+      "area": "Laboratorio",
+      "descripcion": "Adquisición de microscopio y lupa digital",
+      "urgencia": false,
+      "justificacionUrgencia": "",
+      "items": [
+        {"descripcion": "Microscopio", "cantidad": 1, "precioUnitario": 6000},
+        {"descripcion": "Lupa digital", "cantidad": 2, "precioUnitario": 300}
+      ],
+      "montoEstimado": 6600.0,
+      "estado": "enCotizacion",
+      "cotizaciones": ["Q-001", "Q-002"],
+      "proveedorSeleccionadoId": null,
+      "ordenCompraId": null,
+      "facturaId": null,
+      "pagoId": null
+    },
+    {
+      "id": "PR-003",
+      "fecha": "2025-11-15T15:00:00Z",
+      "solicitanteId": "u1",
+      "area": "Clínica",
+      "descripcion": "Equipamiento de emergencia",
+      "urgencia": true,
+      "justificacionUrgencia": "Reemplazo urgente de equipo averiado",
+      "items": [
+        {"descripcion": "Desfibrilador", "cantidad": 1, "precioUnitario": 2000},
+        {"descripcion": "Monitor cardíaco", "cantidad": 2, "precioUnitario": 800}
+      ],
+      "montoEstimado": 3600.0,
+      "estado": "pagado",
+      "cotizaciones": ["Q-003", "Q-004"],
+      "proveedorSeleccionadoId": "SUP-001",
+      "ordenCompraId": "PO-001",
+      "facturaId": "INV-001",
+      "pagoId": "PAY-001"
+    }
+  ],
+  "cotizaciones": [
+    {"id": "Q-001", "solicitudId": "PR-002", "proveedorId": "SUP-001", "fecha": "2025-12-22T09:00:00Z", "monto": 6500, "detalle": "Incluye instalación", "estado": "recibida"},
+    {"id": "Q-002", "solicitudId": "PR-002", "proveedorId": "SUP-002", "fecha": "2025-12-22T09:30:00Z", "monto": 6700, "detalle": "", "estado": "recibida"},
+    {"id": "Q-003", "solicitudId": "PR-003", "proveedorId": "SUP-001", "fecha": "2025-11-16T12:00:00Z", "monto": 3500, "detalle": "Oferta con descuento", "estado": "aceptada"},
+    {"id": "Q-004", "solicitudId": "PR-003", "proveedorId": "SUP-002", "fecha": "2025-11-16T12:30:00Z", "monto": 3700, "detalle": "", "estado": "rechazada"}
+  ],
+  "ordenesCompra": [
+    {
+      "id": "PO-001",
+      "solicitudId": "PR-003",
+      "cotizacionId": "Q-003",
+      "proveedorId": "SUP-001",
+      "fecha": "2025-11-17T09:00:00Z",
+      "monto": 3500,
+      "estado": "generada",
+      "items": [
+        {"descripcion": "Desfibrilador", "cantidad": 1, "precioUnitario": 2000},
+        {"descripcion": "Monitor cardíaco", "cantidad": 2, "precioUnitario": 800}
+      ],
+      "fechaEntrega": "2025-11-25T00:00:00Z",
+      "notas": "Entrega urgente"
+    }
+  ],
+  "facturas": [
+    {
+      "id": "INV-001",
+      "poId": "PO-001",
+      "proveedorId": "SUP-001",
+      "fecha": "2025-11-20T00:00:00Z",
+      "monto": 3500,
+      "estado": "registrada",
+      "referencia": "FAC-1234"
+    }
+  ],
+  "pagos": [
+    {
+      "id": "PAY-001",
+      "facturaId": "INV-001",
+      "fechaPago": "2025-11-30T00:00:00Z",
+      "monto": 3500,
+      "metodo": "Transferencia"
+    }
+  ],
+  "audit": [
+    {"id": "EV-001", "timestamp": "2025-12-28T10:00:00Z", "usuarioId": "u1", "accion": "crear", "entidad": "PR", "entidadId": "PR-001", "detalle": "Creó solicitud en borrador", "before": null, "after": null},
+    {"id": "EV-002", "timestamp": "2025-12-28T10:10:00Z", "usuarioId": "u1", "accion": "crear-enviar", "entidad": "PR", "entidadId": "PR-001", "detalle": "Creó y envió solicitud", "before": null, "after": null},
+    {"id": "EV-004", "timestamp": "2025-12-20T09:00:00Z", "usuarioId": "u6", "accion": "crear-enviar", "entidad": "PR", "entidadId": "PR-002", "detalle": "Creó y envió solicitud", "before": null, "after": null},
+    {"id": "EV-005", "timestamp": "2025-12-21T09:00:00Z", "usuarioId": "u7", "accion": "aprobar", "entidad": "PR", "entidadId": "PR-002", "detalle": "Solicitud aprobada por jefatura", "before": null, "after": null},
+    {"id": "EV-006", "timestamp": "2025-12-22T09:30:00Z", "usuarioId": "u3", "accion": "agregar-cotizacion", "entidad": "PR", "entidadId": "PR-002", "detalle": "Agregó cotizaciones", "before": null, "after": null},
+    {"id": "EV-007", "timestamp": "2025-11-15T15:00:00Z", "usuarioId": "u1", "accion": "crear-enviar", "entidad": "PR", "entidadId": "PR-003", "detalle": "Creó y envió solicitud", "before": null, "after": null},
+    {"id": "EV-008", "timestamp": "2025-11-16T08:00:00Z", "usuarioId": "u2", "accion": "aprobar", "entidad": "PR", "entidadId": "PR-003", "detalle": "Aprobada por jefatura", "before": null, "after": null},
+    {"id": "EV-009", "timestamp": "2025-11-16T12:30:00Z", "usuarioId": "u3", "accion": "agregar-cotizacion", "entidad": "PR", "entidadId": "PR-003", "detalle": "Agregó cotizaciones", "before": null, "after": null},
+    {"id": "EV-010", "timestamp": "2025-11-17T09:00:00Z", "usuarioId": "u3", "accion": "seleccionar-proveedor", "entidad": "PR", "entidadId": "PR-003", "detalle": "Seleccionó proveedor y generó OC PO-001", "before": null, "after": null},
+    {"id": "EV-011", "timestamp": "2025-11-17T10:00:00Z", "usuarioId": "u4", "accion": "aprobar-presupuesto", "entidad": "PR", "entidadId": "PR-003", "detalle": "Aprobó presupuesto y descontó presupuesto", "before": null, "after": null},
+    {"id": "EV-012", "timestamp": "2025-11-20T09:00:00Z", "usuarioId": "u4", "accion": "registrar-factura", "entidad": "PR", "entidadId": "PR-003", "detalle": "Registró factura INV-001", "before": null, "after": null},
+    {"id": "EV-013", "timestamp": "2025-11-30T10:00:00Z", "usuarioId": "u4", "accion": "registrar-pago", "entidad": "PR", "entidadId": "PR-003", "detalle": "Registró pago PAY-001", "before": null, "after": null}
+  ]
+}
